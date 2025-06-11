@@ -22,7 +22,7 @@ This module implements a guild points system for WoTLK (3.3.5a). Guild points ar
 
 ## Configuration
 
-Copy `conf/GuildPoints.conf.dist` to `conf/GuildPoints.conf` and edit the settings as needed:
+Copy `conf/GuildPoints.conf.dist` to your config folder (`etc/modules`) and rename it to `GuildPoints.conf`, then edit the settings as needed:
 
 - Enable/disable the module
 - Set minimum guild member percentage for guild runs
@@ -32,10 +32,28 @@ Copy `conf/GuildPoints.conf.dist` to `conf/GuildPoints.conf` and edit the settin
 
 ## Commands
 
-- `.guildrank 
+### `.grank`
+Displays the guild points ranking.
+
+- If the player is in a guild, it will show their guild's current rank and points.
+- It will then display a leaderboard of the top 5 guilds on the server.
+- Players not in a guild can also use this command to see the top 5 leaderboard.
+
+**Example output for a guild member:**
+```
+--- Guild Points Ranking ---
+Your Guild: <Your Guild Name> | Rank: #3 | Points: 450
+--------------------------
+Top 5 Guilds:
+#1: <Guild One> - 780 points
+#2: <Guild Two> - 620 points
+#3: <Your Guild Name> - 450 points
+#4: <Guild Four> - 310 points
+#5: <Guild Five> - 200 points
+```
 
 ## Credits
 
-- Original author:  Mojispectre(imagionationeditor)
+- Original author: Mojispectre(imagionationeditor)
 - AzerothCore: [https://github.com/azerothcore/azerothcore-wotlk](https://github.com/azerothcore/azerothcore-wotlk)
 - License: AGPL 3.0 

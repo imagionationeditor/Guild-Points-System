@@ -314,96 +314,90 @@ uint32 GuildPoints::GetPointsForBoss(const std::string& bossName, uint8 difficul
     return ConfigMgr::instance()->GetOption<uint32>(configKey, 0);
 }
 
-class GuildPointsCommand : public CommandScript
+ChatCommandTable GuildPointsCommand::GetCommands() const
 {
-public:
-    GuildPointsCommand() : CommandScript("GuildPointsCommand") { }
-
-    ChatCommandTable GetCommands() const override
+    static ChatCommandTable guildPointsCommandTable =
     {
-        static ChatCommandTable guildPointsCommandTable =
-        {
-            { "grank", HandleGprankCommand, SEC_PLAYER, Console::No }
-        };
-        return guildPointsCommandTable;
+        { "grank", HandleGprankCommand, SEC_PLAYER, Console::No }
+    };
+    return guildPointsCommandTable;
+}
+
+bool GuildPointsCommand::HandleGprankCommand(ChatHandler* handler)
+{
+    Player* player = handler->GetPlayer();
+    if (!player)
+    {
+        return false;
     }
 
-    static bool HandleGprankCommand(ChatHandler* handler)
+    handler->PSendSysMessage("|cffeda55f--- Guild Points Ranking ---|r");
+
+    if (Guild* guild = player->GetGuild())
     {
-        Player* player = handler->GetPlayer();
-        if (!player)
+        uint32 guildId = guild->GetId();
+        QueryResult allGuildsResult = CharacterDatabase.Query("SELECT guild_id, points FROM guild_points ORDER BY points DESC");
+        if (allGuildsResult)
         {
-            return false;
-        }
+            uint32 myRank = 0;
+            uint32 myPoints = 0;
+            bool myGuildFound = false;
+            uint32 rankCounter = 0;
 
-        handler->PSendSysMessage("|cffeda55f--- Guild Points Ranking ---|r");
-
-        if (Guild* guild = player->GetGuild())
-        {
-            uint32 guildId = guild->GetId();
-            QueryResult allGuildsResult = CharacterDatabase.Query("SELECT guild_id, points FROM guild_points ORDER BY points DESC");
-            if (allGuildsResult)
+            do
             {
-                uint32 myRank = 0;
-                uint32 myPoints = 0;
-                bool myGuildFound = false;
-                uint32 rankCounter = 0;
-
-                do
-                {
-                    rankCounter++;
-                    Field* fields = allGuildsResult->Fetch();
-                    if (fields[0].Get<uint32>() == guildId) {
-                        myRank = rankCounter;
-                        myPoints = fields[1].Get<uint32>();
-                        myGuildFound = true;
-                        break;
-                    }
-                } while (allGuildsResult->NextRow());
-
-                if (myGuildFound)
-                {
-                    handler->PSendSysMessage("Your Guild: |cff42f5b9%s|r | Rank: |cffffc900#%u|r | Points: |cffffc900%u|r", guild->GetName().c_str(), myRank, myPoints);
+                rankCounter++;
+                Field* fields = allGuildsResult->Fetch();
+                if (fields[0].Get<uint32>() == guildId) {
+                    myRank = rankCounter;
+                    myPoints = fields[1].Get<uint32>();
+                    myGuildFound = true;
+                    break;
                 }
-                else
-                {
-                     handler->PSendSysMessage("Your Guild, |cff42f5b9%s|r, has no points yet.", guild->GetName().c_str());
-                }
+            } while (allGuildsResult->NextRow());
+
+            if (myGuildFound)
+            {
+                handler->PSendSysMessage("Your Guild: |cff42f5b9%s|r | Rank: |cffffc900#%u|r | Points: |cffffc900%u|r", guild->GetName().c_str(), myRank, myPoints);
             }
             else
             {
-                handler->PSendSysMessage("Your Guild, |cff42f5b9%s|r, has no points yet.", guild->GetName().c_str());
+                 handler->PSendSysMessage("Your Guild, |cff42f5b9%s|r, has no points yet.", guild->GetName().c_str());
             }
         }
         else
         {
-            handler->SendSysMessage("You are not in a guild.");
+            handler->PSendSysMessage("Your Guild, |cff42f5b9%s|r, has no points yet.", guild->GetName().c_str());
         }
-        
-        handler->PSendSysMessage("|cffeda55f--------------------------|r");
+    }
+    else
+    {
+        handler->SendSysMessage("You are not in a guild.");
+    }
+    
+    handler->PSendSysMessage("|cffeda55f--------------------------|r");
 
-        QueryResult topGuildsResult = CharacterDatabase.Query("SELECT guild_name, points FROM guild_points ORDER BY points DESC LIMIT 5");
-        
-        handler->PSendSysMessage("|cffffd700Top 5 Guilds:|r");
-        if (!topGuildsResult)
-        {
-            handler->SendSysMessage("No guilds are ranked yet.");
-            return true;
-        }
-
-        uint32 rank = 1;
-        do
-        {
-            Field* fields = topGuildsResult->Fetch();
-            std::string topGuildName = fields[0].Get<std::string>();
-            uint32 points = fields[1].Get<uint32>();
-            handler->PSendSysMessage("|cffffc900#%u:|r |cff42f5b9%s|r - |cffffc900%u|r points", rank, topGuildName.c_str(), points);
-            rank++;
-        } while (topGuildsResult->NextRow());
-
+    QueryResult topGuildsResult = CharacterDatabase.Query("SELECT guild_name, points FROM guild_points ORDER BY points DESC LIMIT 5");
+    
+    handler->PSendSysMessage("|cffffd700Top 5 Guilds:|r");
+    if (!topGuildsResult)
+    {
+        handler->SendSysMessage("No guilds are ranked yet.");
         return true;
     }
-};
+
+    uint32 rank = 1;
+    do
+    {
+        Field* fields = topGuildsResult->Fetch();
+        std::string topGuildName = fields[0].Get<std::string>();
+        uint32 points = fields[1].Get<uint32>();
+        handler->PSendSysMessage("|cffffc900#%u:|r |cff42f5b9%s|r - |cffffc900%u|r points", rank, topGuildName.c_str(), points);
+        rank++;
+    } while (topGuildsResult->NextRow());
+
+    return true;
+}
 
 void AddGuildPointsScripts()
 {

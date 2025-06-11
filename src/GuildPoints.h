@@ -27,17 +27,10 @@ using namespace Acore::ChatCommands;
 class GuildPoints : public PlayerScript
 {
 public:
-    GuildPoints() : PlayerScript("GuildPoints") { }
-
-    void OnCreatureKill(Player* player, Creature* killed);
-    bool HasGuildPoints(Player* player);
+    GuildPoints() : PlayerScript("GuildPoints") {}
 
 private:
-    bool IsValidRaidMap(uint32 mapId);
-    void CheckGuildRun(Group* group, Guild*& majorityGuild, float& percentage);
-    uint32 GetPointsForBoss(const std::string& bossName, uint8 difficulty);
-    void AddGuildPoints(Guild* guild, uint32 points);
-    void HandlePostKillEffects(Group* group);
+    void OnCreatureKill(Player* player, Creature* killed) override;
 };
 
 class GuildPointsCommand : public CommandScript
@@ -47,9 +40,15 @@ public:
 
     ChatCommandTable GetCommands() const override;
 
-private:
-    static bool HandleGuildRankCommand(ChatHandler* handler, const char* args);
+    static bool HandleGprankCommand(ChatHandler* handler);
 };
+
+bool IsValidRaidMap(uint32 mapId);
+void AddGuildPoints(Guild* guild, uint32 points);
+void HandlePostKillEffects(Group* group);
+bool HasGuildPoints(Player* player);
+void CheckGuildRun(Group* group, Guild*& majorityGuild, float& percentage);
+uint32 GetPointsForBoss(const std::string& bossName, uint8 difficulty);
 
 void AddGuildPointsScripts();
 
