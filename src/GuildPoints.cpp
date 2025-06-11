@@ -113,12 +113,10 @@ void GuildPoints::OnCreatureKill(Player* player, Creature* killed)
             sWorldSessionMgr->SendServerMessage(SERVER_MSG_STRING, stream.str().c_str());
 
             // Announce to guild
-            PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_SEL_GUILD_POINTS);
-            stmt->SetData(0, MYSQL_TYPE_LONG, majorityGuild->GetId());
-
-            if (PreparedQueryResult result = CharacterDatabase.Query(stmt))
+            QueryResult queryGuildPoints = CharacterDatabase.Query("SELECT `points` FROM `guild_points` WHERE `guild_id`={}", majorityGuild->GetId());
+            if (queryGuildPoints)
             {
-                uint32 totalPoints = (*result)[0].Get<uint32>();
+                uint32 totalPoints = (*queryGuildPoints)[0].Get<uint32>();
 
                 std::string guildAnnounce = "|TInterface\\Icons\\INV_Misc_Coin_01:25:25|t ";
                 guildAnnounce += "|cFF00FF00Guild has earned|r |cFFFFFF00" + std::to_string(points) + " points|r ";
@@ -148,19 +146,17 @@ void GuildPoints::AddGuildPoints(Guild* guild, uint32 points)
     if (!guild)
         return;
 
-    std::ostringstream query;
-    query << "SELECT * FROM guild_points WHERE guild_id=" << guild->GetId() << " AND points>0";
-    QueryResult queryGuildPoints = CharacterDatabase.Query(query.str().c_str());
+    QueryResult queryGuildPoints = CharacterDatabase.Query("SELECT * FROM `guild_points` WHERE `guild_id`={}", guild->GetId());
     if (queryGuildPoints)
     {
         // Guild exists in points table, update points
-        CharacterDatabase.Query("UPDATE guild_points SET points = points + %u WHERE guild_id = %u", points, guild->GetId());
+        CharacterDatabase.Query("UPDATE `guild_points` SET `points`=`points`+{} WHERE `guild_id`={}", points, guild->GetId());
     }
     else
     {
         // Guild doesn't exist in points table, insert new record
-        CharacterDatabase.Query("INSERT INTO guild_points (guild_id, guild_name, points) VALUES (%u, '%s', %u)", 
-            guild->GetId(), guild->GetName().c_str(), points);
+        CharacterDatabase.Query("INSERT INTO `guild_points` (`guild_id`, `guild_name`, `points`) VALUES ({}, '{}', {})", 
+            guild->GetId(), guild->GetName(), points);
     }
 }
 
@@ -241,16 +237,11 @@ bool GuildPoints::HasGuildPoints(Player* player)
     if (!guild)
         return false;
 
-    // First check if guild exists in points table
-    QueryResult queryGuildPoints = CharacterDatabase.Query("SELECT * FROM guild_points WHERE guild_id = {}", guild->GetId());
-    if (!queryGuildPoints)
-    {
-        // Guild not found in points table, add it with 0 points
-        CharacterDatabase.Query("INSERT INTO guild_points (guild_id, guild_name, points) VALUES ({}, '{}', 0)", 
-            guild->GetId(), guild->GetName());
-    }
+    QueryResult queryGuildPoints = CharacterDatabase.Query("SELECT * FROM `guild_points` WHERE `guild_id`={} AND `points`>0", guild->GetId());
+    if (queryGuildPoints)
+        return true;
 
-    return true; // Return true since guild is now in the table
+    return false;
 }
 
 ChatCommandTable GuildPointsCommand::GetCommands() const
