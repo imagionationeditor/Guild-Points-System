@@ -1,59 +1,78 @@
-# Guild Points System
+# Guild Points Module
 
-## Description
+**Author:** mojispectre | **Version:** 1.0 | **Date:** July 2025
 
-This module implements a guild points system for WoTLK (3.3.5a). Guild points are awarded to guilds when they defeat raid bosses, with different point values based on raid size (10/25) and difficulty (Normal/Heroic).
+## 📖 Description
 
-## Features
+Guild points system that rewards guilds for raid boss kills with server announcements and competitive ranking.
 
-- Automatic point awarding for raid boss kills
-- Different point values for different raid sizes and difficulties
-- Configurable minimum guild member percentage for guild runs
-- Support for all WoTLK raids (Naxxramas, Ulduar, Trial of the Crusader, Icecrown Citadel, etc.)
-- Spell and debuff system after boss kills
-- Distance checking to prevent exploits
-- Chat commands to check guild points
+## ✨ Features
 
-## Installation
+- **Guild Point Rewards**: Automatic points for boss kills (80% guild members required)
+- **Server Announcements**: Beautiful messages with boss icons and role distribution 🛡️💚⚔️
+- **Ranking System**: `.grank` command shows guild standings with 🥇🥈🥉 medals
+- **Season Reset & Rewards**: GM command `.greset` to reset points and give rewards to top guilds
+- **Faction Benefits**: Auto buffs/debuff removal for successful guild runs
+- **PUG Detection**: Separate announcements for mixed groups
 
-1. Clone this module into the `modules` directory of your AzerothCore source
-2. Re-run cmake and rebuild AzerothCore
-3. Execute the SQL file in `sql/characters/base/guild_points.sql` to create required tables
+## 🎯 Supported Content
 
-## Configuration
+**All WotLK Raids**: Naxx, EoE, OS, Ulduar, Onyxia, ToC, ICC, RS  
+**Difficulties**: 10/25 Normal, Heroic, Hardmode  
+**Point Values**: 10-25 points based on difficulty
 
-Copy `conf/GuildPoints.conf.dist` to your config folder (`etc/modules`) and rename it to `GuildPoints.conf`, then edit the settings as needed:
+## 🛠️ Installation
 
-- Enable/disable the module
-- Set minimum guild member percentage for guild runs
-- Configure points for each boss
-- Set up spell and debuff systems
-- Adjust maximum allowed distance between players
+1. **Database**: Execute `sql/characters/guild_points_characters.sql` on your **characters** database
+2. **Files**: Copy module to `modules/mod-guild-points/`
+3. **Config**: Copy `.conf.dist` to `.conf` and configure
+4. **Build**: Recompile AzerothCore
 
-## Commands
+## ⚙️ Configuration
 
-### `.grank`
-Displays the guild points ranking.
+```ini
+GuildPoints.Enable = 1                         # Enable module
+GuildPoints.MinGuildPercentage = 80            # Guild member % required
+GuildPoints.MaxDistance = 300                  # Distance validation (yards)
+GuildPoints.Points.25HC = 25                   # Point values per difficulty
 
-- If the player is in a guild, it will show their guild's current rank and points.
-- It will then display a leaderboard of the top 5 guilds on the server.
-- Players not in a guild can also use this command to see the top 5 leaderboard.
-
-**Example output for a guild member:**
-```
---- Guild Points Ranking ---
-Your Guild: <Your Guild Name> | Rank: #3 | Points: 450
---------------------------
-Top 5 Guilds:
-#1: <Guild One> - 780 points
-#2: <Guild Two> - 620 points
-#3: <Your Guild Name> - 450 points
-#4: <Guild Four> - 310 points
-#5: <Guild Five> - 200 points
+# Season Reset & Rewards
+GuildPoints.MinPointsForRewards = 100          # Minimum points for rewards
+GuildPoints.RewardDistribution = 3             # 3=Top ranks only, 1=All members, 2=Online only
+GuildPoints.TopRanksCount = 3                  # Number of top ranks to reward
+GuildPoints.Rewards.FirstPlace.Gold = 50000    # Gold reward (in copper)
+GuildPoints.Rewards.FirstPlace.Mount = 25953   # Mount spell ID
 ```
 
-## Credits
+## 🎮 Commands
 
-- Original author: Mojispectre(imagionationeditor)
-- AzerothCore: [https://github.com/azerothcore/azerothcore-wotlk](https://github.com/azerothcore/azerothcore-wotlk)
-- License: AGPL 3.0 
+- **`.grank`** - View guild rankings and standings
+- **`.greset`** - (GM only) Reset season and distribute rewards
+
+## 📊 Examples
+
+**Guild Victory:**
+```
+|TThe Lich King (25HC) defeated by Arthas <Immortal Legion> received 25 points! 💀 [23/25 alive] [🛡️:2 💚:5 ⚔️:18]
+```
+
+**Season End:**
+```
+🏆 [SEASON END] Guild Points Season has ended! Final standings:
+🥇 [SEASON REWARDS] <Immortal Legion> finished 1st Place with 1250 points and top 3 ranks received rewards! 💰500g 🐎Mount
+🥈 [SEASON REWARDS] <Death Knights> finished 2nd Place with 980 points and top 3 ranks received rewards! 💰300g 🐎Mount
+✨ [NEW SEASON] All guild points have been reset! New season begins now!
+```
+
+**Guild Ranking:**
+```
+Your guild <Dragon Slayers> has 450 points
+
+🥇 <Immortal Legion> - 1250 points
+🥈 <Death Knights> - 980 points
+🥉 <Shadow Legion> - 750 points
+```
+
+---
+
+**Credits:** mojispectre | **Framework:** AzerothCore | **License:** GPL v3.0

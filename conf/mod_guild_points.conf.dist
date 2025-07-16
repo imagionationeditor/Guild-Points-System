@@ -1,0 +1,286 @@
+###################################################################################################
+# GUILD POINTS MODULE
+###################################################################################################
+
+# Enable/Disable the Guild Points module
+# Default: 1 (enabled)
+GuildPoints.Enable = 1
+
+# Minimum percentage of raid members that must be from raid leader's guild
+# Default: 80
+GuildPoints.MinGuildPercentage = 80
+
+# Maximum distance from raid leader in yards
+# Default: 300
+GuildPoints.MaxDistance = 300
+
+# Point values for different raid types
+GuildPoints.Points.10Man = 10
+GuildPoints.Points.25Man = 20
+GuildPoints.Points.10HC = 15
+GuildPoints.Points.25HC = 25
+GuildPoints.Points.10Hardmode = 13
+GuildPoints.Points.25Hardmode = 23
+
+# Boss IDs and their point categories (format: bossId:category)
+# Categories: 10, 25, 10hc, 25hc, 10hard, 25hard
+
+# Naxxramas (All bosses - 10/25 only)
+GuildPoints.Boss.15989 = 10,25  # Anub'Rekhan
+GuildPoints.Boss.15956 = 10,25  # Grand Widow Faerlina
+GuildPoints.Boss.15952 = 10,25  # Maexxna
+GuildPoints.Boss.15954 = 10,25  # Noth the Plaguebringer
+GuildPoints.Boss.15936 = 10,25  # Heigan the Unclean
+GuildPoints.Boss.16011 = 10,25  # Loatheb
+GuildPoints.Boss.15931 = 10,25  # Instructor Razuvious
+GuildPoints.Boss.16061 = 10,25  # Gothik the Harvester
+GuildPoints.Boss.30549 = 10,25  # Baron Rivendare (Four Horsemen)
+GuildPoints.Boss.16065 = 10,25  # Lady Blaumeux (Four Horsemen)
+GuildPoints.Boss.16064 = 10,25  # Thane Korth'azz (Four Horsemen)
+GuildPoints.Boss.16063 = 10,25  # Sir Zeliek (Four Horsemen)
+GuildPoints.Boss.15990 = 10,25  # Kel'Thuzad
+GuildPoints.Boss.16028 = 10,25  # Patchwerk
+GuildPoints.Boss.15929 = 10,25  # Grobbulus
+GuildPoints.Boss.15930 = 10,25  # Gluth
+GuildPoints.Boss.15928 = 10,25  # Thaddius
+GuildPoints.Boss.15932 = 10,25  # Sapphiron
+
+# Eye of Eternity
+GuildPoints.Boss.28859 = 10,25  # Malygos
+
+# Obsidian Sanctum (Final Boss)
+GuildPoints.Boss.28860 = 10,25,10hard,25hard  # Sartharion
+
+# Ulduar (Complete list with hardmodes)
+GuildPoints.Boss.33113 = 10,25,10hard,25hard  # Flame Leviathan
+GuildPoints.Boss.33118 = 10,25  # Ignis the Furnace Master
+GuildPoints.Boss.33186 = 10,25  # Razorscale
+GuildPoints.Boss.33293 = 10,25,10hard,25hard  # XT-002 Deconstructor
+GuildPoints.Boss.32867 = 10,25,10hard,25hard  # Steelbreaker (Assembly of Iron)
+GuildPoints.Boss.32927 = 10,25,10hard,25hard  # Runemaster Molgeim (Assembly of Iron)
+GuildPoints.Boss.32857 = 10,25,10hard,25hard  # Stormcaller Brundir (Assembly of Iron)
+GuildPoints.Boss.32865 = 10,25  # Kologarn
+GuildPoints.Boss.33515 = 10,25  # Auriaya
+GuildPoints.Boss.32845 = 10,25,10hard,25hard  # Thorim
+GuildPoints.Boss.32857 = 10,25,10hard,25hard  # Hodir
+GuildPoints.Boss.32906 = 10,25,10hard,25hard  # Freya
+GuildPoints.Boss.32930 = 10,25,10hard,25hard  # Mimiron
+GuildPoints.Boss.33271 = 10,25,10hard,25hard  # General Vezax
+GuildPoints.Boss.33288 = 10,25,10hard,25hard  # Yogg-Saron
+GuildPoints.Boss.32871 = 10,25  # Algalon the Observer
+
+# Onyxia's Lair
+GuildPoints.Boss.10184 = 10,25  # Onyxia
+
+# Trial of the Crusader/Grand Crusader (Complete)
+GuildPoints.Boss.34796 = 10,25,10hc,25hc  # Gormok the Impaler (Northrend Beasts)
+GuildPoints.Boss.35144 = 10,25,10hc,25hc  # Acidmaw (Northrend Beasts)
+GuildPoints.Boss.34799 = 10,25,10hc,25hc  # Dreadscale (Northrend Beasts)
+GuildPoints.Boss.34797 = 10,25,10hc,25hc  # Icehowl (Northrend Beasts)
+GuildPoints.Boss.35013 = 10,25,10hc,25hc  # Lord Jaraxxus
+GuildPoints.Boss.34461 = 10,25,10hc,25hc  # Tyrius Duskblade (Champions Alliance)
+GuildPoints.Boss.34460 = 10,25,10hc,25hc  # Kavina Groveheart (Champions Alliance)
+GuildPoints.Boss.34469 = 10,25,10hc,25hc  # Meledor Valestrider (Champions Alliance)
+GuildPoints.Boss.34467 = 10,25,10hc,25hc  # Alyssia Moonstalker (Champions Alliance)
+GuildPoints.Boss.34468 = 10,25,10hc,25hc  # Noozle Whizzlestick (Champions Alliance)
+GuildPoints.Boss.34471 = 10,25,10hc,25hc  # Shambling Horror (Champions Horde)
+GuildPoints.Boss.34472 = 10,25,10hc,25hc  # Deathstalker Visceri (Champions Horde)
+GuildPoints.Boss.34473 = 10,25,10hc,25hc  # Gordul (Champions Horde)
+GuildPoints.Boss.34474 = 10,25,10hc,25hc  # Ginselle Blightslinger (Champions Horde)
+GuildPoints.Boss.34475 = 10,25,10hc,25hc  # Liandra Suncaller (Champions Horde)
+GuildPoints.Boss.34564 = 10,25,10hc,25hc  # Anub'arak
+GuildPoints.Boss.35144 = 10,25,10hc,25hc  # Fjola Lightbane (Twin Val'kyr)
+GuildPoints.Boss.34497 = 10,25,10hc,25hc  # Eydis Darkbane (Twin Val'kyr)
+
+# Icecrown Citadel (Complete with all wings)
+# Lower Spire
+GuildPoints.Boss.36612 = 10,25,10hc,25hc  # Lord Marrowgar
+GuildPoints.Boss.36855 = 10,25,10hc,25hc  # Lady Deathwhisper
+GuildPoints.Boss.37540 = 10,25,10hc,25hc  # Gunship Battle
+GuildPoints.Boss.37813 = 10,25,10hc,25hc  # Deathbringer Saurfang
+
+# Plagueworks
+GuildPoints.Boss.36626 = 10,25,10hc,25hc  # Festergut
+GuildPoints.Boss.36627 = 10,25,10hc,25hc  # Rotface
+GuildPoints.Boss.36678 = 10,25,10hc,25hc  # Professor Putricide
+
+# Crimson Halls
+GuildPoints.Boss.37813 = 10,25,10hc,25hc  # Blood Prince Council
+GuildPoints.Boss.37955 = 10,25,10hc,25hc  # Prince Keleseth (Blood Prince Council)
+GuildPoints.Boss.37973 = 10,25,10hc,25hc  # Prince Taldaram (Blood Prince Council)
+GuildPoints.Boss.37970 = 10,25,10hc,25hc  # Prince Valanar (Blood Prince Council)
+GuildPoints.Boss.37972 = 10,25,10hc,25hc  # Blood-Queen Lana'thel
+
+# Frostwing Halls
+GuildPoints.Boss.36789 = 10,25,10hc,25hc  # Valithria Dreamwalker
+GuildPoints.Boss.36597 = 10,25,10hc,25hc  # Sindragosa
+
+# Frozen Throne
+GuildPoints.Boss.36597 = 10,25,10hc,25hc  # The Lich King
+
+# Ruby Sanctum (Final Boss)
+GuildPoints.Boss.39863 = 10,25,10hc,25hc  # Halion
+
+# Boss Icons (Achievement Icons)
+# Naxxramas
+GuildPoints.BossIcon.15989 = Interface\\ICONS\\Achievement_Boss_Anubrekhan  # Anub'Rekhan
+GuildPoints.BossIcon.15956 = Interface\\ICONS\\Achievement_Boss_Faerlina  # Grand Widow Faerlina
+GuildPoints.BossIcon.15952 = Interface\\ICONS\\Achievement_Boss_Maexxna  # Maexxna
+GuildPoints.BossIcon.15954 = Interface\\ICONS\\Achievement_Boss_Noth  # Noth the Plaguebringer
+GuildPoints.BossIcon.15936 = Interface\\ICONS\\Achievement_Boss_Heigan  # Heigan the Unclean
+GuildPoints.BossIcon.16011 = Interface\\ICONS\\Achievement_Boss_Loatheb  # Loatheb
+GuildPoints.BossIcon.15931 = Interface\\ICONS\\Achievement_Boss_Razuvious  # Instructor Razuvious
+GuildPoints.BossIcon.16061 = Interface\\ICONS\\Achievement_Boss_Gothik  # Gothik the Harvester
+GuildPoints.BossIcon.30549 = Interface\\ICONS\\Achievement_Boss_BaronRivendare  # Baron Rivendare
+GuildPoints.BossIcon.16065 = Interface\\ICONS\\Achievement_Boss_Horsemen  # Lady Blaumeux
+GuildPoints.BossIcon.16064 = Interface\\ICONS\\Achievement_Boss_Horsemen  # Thane Korth'azz
+GuildPoints.BossIcon.16063 = Interface\\ICONS\\Achievement_Boss_Horsemen  # Sir Zeliek
+GuildPoints.BossIcon.15990 = Interface\\ICONS\\Achievement_Boss_KelThuzad_01  # Kel'Thuzad
+GuildPoints.BossIcon.16028 = Interface\\ICONS\\Achievement_Boss_Patchwerk  # Patchwerk
+GuildPoints.BossIcon.15929 = Interface\\ICONS\\Achievement_Boss_Grobbulus  # Grobbulus
+GuildPoints.BossIcon.15930 = Interface\\ICONS\\Achievement_Boss_Gluth  # Gluth
+GuildPoints.BossIcon.15928 = Interface\\ICONS\\Achievement_Boss_Thaddius  # Thaddius
+GuildPoints.BossIcon.15932 = Interface\\ICONS\\Achievement_Boss_Sapphiron  # Sapphiron
+
+# Eye of Eternity
+GuildPoints.BossIcon.28859 = Interface\\ICONS\\Achievement_Boss_Malygos_01  # Malygos
+
+# Obsidian Sanctum
+GuildPoints.BossIcon.28860 = Interface\\ICONS\\Achievement_Boss_Sartharion_01  # Sartharion
+
+# Ulduar
+GuildPoints.BossIcon.33113 = Interface\\ICONS\\Achievement_Boss_FlameLeviathan  # Flame Leviathan
+GuildPoints.BossIcon.33118 = Interface\\ICONS\\Achievement_Boss_Ignis  # Ignis the Furnace Master
+GuildPoints.BossIcon.33186 = Interface\\ICONS\\Achievement_Boss_Razorscale  # Razorscale
+GuildPoints.BossIcon.33293 = Interface\\ICONS\\Achievement_Boss_XT002  # XT-002 Deconstructor
+GuildPoints.BossIcon.32867 = Interface\\ICONS\\Achievement_Boss_AssemblyofIron  # Assembly of Iron
+GuildPoints.BossIcon.32927 = Interface\\ICONS\\Achievement_Boss_AssemblyofIron  # Assembly of Iron
+GuildPoints.BossIcon.32857 = Interface\\ICONS\\Achievement_Boss_AssemblyofIron  # Assembly of Iron
+GuildPoints.BossIcon.32865 = Interface\\ICONS\\Achievement_Boss_Kologarn  # Kologarn
+GuildPoints.BossIcon.33515 = Interface\\ICONS\\Achievement_Boss_Auriaya  # Auriaya
+GuildPoints.BossIcon.32845 = Interface\\ICONS\\Achievement_Boss_Thorim  # Thorim
+GuildPoints.BossIcon.32857 = Interface\\ICONS\\Achievement_Boss_Hodir_01  # Hodir
+GuildPoints.BossIcon.32906 = Interface\\ICONS\\Achievement_Boss_Freya_01  # Freya
+GuildPoints.BossIcon.32930 = Interface\\ICONS\\Achievement_Boss_Mimiron_01  # Mimiron
+GuildPoints.BossIcon.33271 = Interface\\ICONS\\Achievement_Boss_GeneralVezax  # General Vezax
+GuildPoints.BossIcon.33288 = Interface\\ICONS\\Achievement_Boss_YoggSaron_01  # Yogg-Saron
+GuildPoints.BossIcon.32871 = Interface\\ICONS\\Achievement_Boss_Algalon_01  # Algalon the Observer
+
+# Onyxia
+GuildPoints.BossIcon.10184 = Interface\\ICONS\\Achievement_Boss_Onyxia  # Onyxia
+
+# Trial of the Crusader
+GuildPoints.BossIcon.34796 = Interface\\ICONS\\Achievement_Boss_NorthrendBeasts  # Gormok
+GuildPoints.BossIcon.35144 = Interface\\ICONS\\Achievement_Boss_NorthrendBeasts  # Acidmaw
+GuildPoints.BossIcon.34799 = Interface\\ICONS\\Achievement_Boss_NorthrendBeasts  # Dreadscale
+GuildPoints.BossIcon.34797 = Interface\\ICONS\\Achievement_Boss_NorthrendBeasts  # Icehowl
+GuildPoints.BossIcon.35013 = Interface\\ICONS\\Achievement_Boss_Jaraxxus_01  # Lord Jaraxxus
+GuildPoints.BossIcon.34461 = Interface\\ICONS\\Achievement_Boss_Champions  # Champions Alliance
+GuildPoints.BossIcon.34460 = Interface\\ICONS\\Achievement_Boss_Champions  # Champions Alliance
+GuildPoints.BossIcon.34469 = Interface\\ICONS\\Achievement_Boss_Champions  # Champions Alliance
+GuildPoints.BossIcon.34467 = Interface\\ICONS\\Achievement_Boss_Champions  # Champions Alliance
+GuildPoints.BossIcon.34468 = Interface\\ICONS\\Achievement_Boss_Champions  # Champions Alliance
+GuildPoints.BossIcon.34471 = Interface\\ICONS\\Achievement_Boss_Champions  # Champions Horde
+GuildPoints.BossIcon.34472 = Interface\\ICONS\\Achievement_Boss_Champions  # Champions Horde
+GuildPoints.BossIcon.34473 = Interface\\ICONS\\Achievement_Boss_Champions  # Champions Horde
+GuildPoints.BossIcon.34474 = Interface\\ICONS\\Achievement_Boss_Champions  # Champions Horde
+GuildPoints.BossIcon.34475 = Interface\\ICONS\\Achievement_Boss_Champions  # Champions Horde
+GuildPoints.BossIcon.35144 = Interface\\ICONS\\Achievement_Boss_TwinValkyr  # Twin Val'kyr
+GuildPoints.BossIcon.34497 = Interface\\ICONS\\Achievement_Boss_TwinValkyr  # Twin Val'kyr
+GuildPoints.BossIcon.34564 = Interface\\ICONS\\Achievement_Boss_Anubarak_01  # Anub'arak
+
+# Icecrown Citadel
+GuildPoints.BossIcon.36612 = Interface\\ICONS\\Achievement_Boss_LordMarrowgar  # Lord Marrowgar
+GuildPoints.BossIcon.36855 = Interface\\ICONS\\Achievement_Boss_LadyDeathwhisper  # Lady Deathwhisper
+GuildPoints.BossIcon.37540 = Interface\\ICONS\\Achievement_Boss_GunshipBattle  # Gunship Battle
+GuildPoints.BossIcon.37813 = Interface\\ICONS\\Achievement_Boss_DeathbringerSaurfang  # Deathbringer Saurfang
+GuildPoints.BossIcon.36626 = Interface\\ICONS\\Achievement_Boss_Festergut  # Festergut
+GuildPoints.BossIcon.36627 = Interface\\ICONS\\Achievement_Boss_Rotface  # Rotface
+GuildPoints.BossIcon.36678 = Interface\\ICONS\\Achievement_Boss_ProfessorPutricide  # Professor Putricide
+GuildPoints.BossIcon.37955 = Interface\\ICONS\\Achievement_Boss_BloodPrinceCouncil  # Blood Prince Council
+GuildPoints.BossIcon.37973 = Interface\\ICONS\\Achievement_Boss_BloodPrinceCouncil  # Blood Prince Council
+GuildPoints.BossIcon.37970 = Interface\\ICONS\\Achievement_Boss_BloodPrinceCouncil  # Blood Prince Council
+GuildPoints.BossIcon.37972 = Interface\\ICONS\\Achievement_Boss_BloodQueenLanathel  # Blood-Queen Lana'thel
+GuildPoints.BossIcon.36789 = Interface\\ICONS\\Achievement_Boss_ValithriaDreamwalker  # Valithria Dreamwalker
+GuildPoints.BossIcon.36597 = Interface\\ICONS\\Achievement_Boss_Sindragosa  # Sindragosa
+GuildPoints.BossIcon.36597 = Interface\\ICONS\\Achievement_Boss_LichKing  # The Lich King
+
+# Ruby Sanctum
+GuildPoints.BossIcon.39863 = Interface\\ICONS\\Achievement_Boss_Halion  # Halion
+
+# Default icon for bosses without specific achievement icons
+GuildPoints.DefaultBossIcon = Interface\\ICONS\\Achievement_Boss_Skull
+
+# Buffs to apply after successful guild run (spell IDs)
+GuildPoints.Buffs.Horde = 16609,24705
+GuildPoints.Buffs.Alliance = 16609,24705
+
+# Debuffs to remove after successful guild run (spell IDs)
+GuildPoints.RemoveDebuffs = 25771,25646
+
+# Cooldowns to reset after successful guild run (spell IDs)
+GuildPoints.ResetCooldowns = 20608,19801
+
+###################################################################################################
+# GUILD POINTS RESET & REWARDS SYSTEM
+###################################################################################################
+
+# Enable automatic season reset (0 = manual only, 1 = auto reset enabled)
+GuildPoints.AutoReset.Enable = 0
+
+# Auto reset interval in days (default: 30 days)
+GuildPoints.AutoReset.IntervalDays = 30
+
+# Minimum points required to be eligible for season rewards
+GuildPoints.MinPointsForRewards = 100
+
+# Season End Rewards for Top 3 Guilds
+# Format: itemId:quantity,itemId:quantity,gold:amount,mount:mountId
+
+# 1st Place Guild Rewards (Gold Medal)
+# Gold coins, Epic mount, Premium items for top 3 ranks
+GuildPoints.Rewards.FirstPlace = 49426:5,45038:10,40753:15,37711:20
+GuildPoints.Rewards.FirstPlace.Gold = 50000
+GuildPoints.Rewards.FirstPlace.Mount = 25953
+# Rewards: 5x Emblem of Frost, 10x Fragment of Val'anyr, 15x Pattern: Satchel, 20x Ink + 500 Gold + Epic Mount
+
+# 2nd Place Guild Rewards (Silver Medal)  
+# Gold coins, Rare mount, Good items for top 3 ranks
+GuildPoints.Rewards.SecondPlace = 49426:3,45038:7,40753:10,37711:15
+GuildPoints.Rewards.SecondPlace.Gold = 30000
+GuildPoints.Rewards.SecondPlace.Mount = 25471
+# Rewards: 3x Emblem of Frost, 7x Fragment of Val'anyr, 10x Pattern: Satchel, 15x Ink + 300 Gold + Rare Mount
+
+# 3rd Place Guild Rewards (Bronze Medal)
+# Gold coins, Good mount, Standard items for top 3 ranks  
+GuildPoints.Rewards.ThirdPlace = 49426:2,45038:5,40753:7,37711:10
+GuildPoints.Rewards.ThirdPlace.Gold = 20000
+GuildPoints.Rewards.ThirdPlace.Mount = 25470
+# Rewards: 2x Emblem of Frost, 5x Fragment of Val'anyr, 7x Pattern: Satchel, 10x Ink + 200 Gold + Good Mount
+
+# Participation Rewards (for guilds with minimum points)
+# Standard rewards for top 3 ranks of qualifying guilds
+GuildPoints.Rewards.Participation = 40753:3,37711:10
+GuildPoints.Rewards.Participation.Gold = 5000
+# Rewards: 3x Pattern: Satchel, 10x Ink + 50 Gold
+
+# Reward Distribution Method
+# 0 = Only Guild Master receives rewards
+# 1 = All guild members receive rewards  
+# 2 = Only online guild members receive rewards
+# 3 = Only top 3 ranks in guild receive rewards (max 25 people)
+GuildPoints.RewardDistribution = 3
+
+# How many top ranks in each guild receive rewards (for qualifying guilds)
+GuildPoints.TopRanksCount = 3
+
+# Maximum number of people per guild to receive rewards (even if more have top 3 ranks)
+GuildPoints.MaxRewardedPerGuild = 25
+
+# Server announcement for season reset and rewards
+GuildPoints.AnnounceReset = 1
+
+# Title rewards disabled - only gold, mounts and items are given
+# GuildPoints.Title.FirstPlace = 143   # Disabled
+# GuildPoints.Title.SecondPlace = 142  # Disabled  
+# GuildPoints.Title.ThirdPlace = 141   # Disabled
