@@ -39,8 +39,12 @@
 #include "SpellInfo.h"
 #include "World.h"
 #include "WorldSession.h"
-#include "Field.h"
+#include "WorldSessionMgr.h"
+#include "QueryResult.h"
+#include "PreparedStatement.h"
 #include "loader.h"
+
+using namespace Acore::ChatCommands;
 #include <unordered_map>
 #include <vector>
 #include <string>
@@ -83,23 +87,23 @@ public:
 
     void LoadConfig()
     {
-        enabled = sConfigMgr->GetBoolDefault("GuildPoints.Enable", true);
-        minGuildPercentage = sConfigMgr->GetIntDefault("GuildPoints.MinGuildPercentage", 80);
-        maxDistance = sConfigMgr->GetFloatDefault("GuildPoints.MaxDistance", 300.0f);
+        enabled = sConfigMgr->GetOption<bool>("GuildPoints.Enable", true);
+        minGuildPercentage = sConfigMgr->GetOption<uint32>("GuildPoints.MinGuildPercentage", 80);
+        maxDistance = sConfigMgr->GetOption<float>("GuildPoints.MaxDistance", 300.0f);
         
-        points10Man = sConfigMgr->GetIntDefault("GuildPoints.Points.10Man", 10);
-        points25Man = sConfigMgr->GetIntDefault("GuildPoints.Points.25Man", 20);
-        points10HC = sConfigMgr->GetIntDefault("GuildPoints.Points.10HC", 15);
-        points25HC = sConfigMgr->GetIntDefault("GuildPoints.Points.25HC", 25);
-        points10Hard = sConfigMgr->GetIntDefault("GuildPoints.Points.10Hardmode", 13);
-        points25Hard = sConfigMgr->GetIntDefault("GuildPoints.Points.25Hardmode", 23);
+        points10Man = sConfigMgr->GetOption<uint32>("GuildPoints.Points.10Man", 10);
+        points25Man = sConfigMgr->GetOption<uint32>("GuildPoints.Points.25Man", 20);
+        points10HC = sConfigMgr->GetOption<uint32>("GuildPoints.Points.10HC", 15);
+        points25HC = sConfigMgr->GetOption<uint32>("GuildPoints.Points.25HC", 25);
+        points10Hard = sConfigMgr->GetOption<uint32>("GuildPoints.Points.10Hardmode", 13);
+        points25Hard = sConfigMgr->GetOption<uint32>("GuildPoints.Points.25Hardmode", 23);
 
         // Reset & Rewards Configuration
-        autoResetEnabled = sConfigMgr->GetBoolDefault("GuildPoints.AutoReset.Enable", false);
-        resetIntervalDays = sConfigMgr->GetIntDefault("GuildPoints.AutoReset.IntervalDays", 30);
-        minPointsForRewards = sConfigMgr->GetIntDefault("GuildPoints.MinPointsForRewards", 100);
-        rewardDistribution = sConfigMgr->GetIntDefault("GuildPoints.RewardDistribution", 1);
-        announceReset = sConfigMgr->GetBoolDefault("GuildPoints.AnnounceReset", true);
+        autoResetEnabled = sConfigMgr->GetOption<bool>("GuildPoints.AutoReset.Enable", false);
+        resetIntervalDays = sConfigMgr->GetOption<uint32>("GuildPoints.AutoReset.IntervalDays", 30);
+        minPointsForRewards = sConfigMgr->GetOption<uint32>("GuildPoints.MinPointsForRewards", 100);
+        rewardDistribution = sConfigMgr->GetOption<uint32>("GuildPoints.RewardDistribution", 1);
+        announceReset = sConfigMgr->GetOption<bool>("GuildPoints.AnnounceReset", true);
 
         LoadBossConfigs();
         LoadBuffConfigs();
@@ -151,7 +155,7 @@ public:
                     "💀 |cFF90EE90[" + std::to_string(stats.alivePlayers) + "/" + std::to_string(stats.totalPlayers) + " alive] " +
                     "[🛡️:" + std::to_string(stats.tanks) + " 💚:" + std::to_string(stats.healers) + " ⚔️:" + std::to_string(stats.dps) + "]|r";
                 
-                sWorld->SendServerMessage(SERVER_MSG_CUSTOM, announcement.c_str());
+                sWorldSessionMgr->SendServerMessage(SERVER_MSG_STRING, announcement.c_str());
                 
                 // Guild message
                 SendGuildMessage(guild, bossName, points);
@@ -169,16 +173,17 @@ public:
                 "💀 |cFF90EE90[" + std::to_string(stats.alivePlayers) + "/" + std::to_string(stats.totalPlayers) + " alive] " +
                 "[🛡️:" + std::to_string(stats.tanks) + " 💚:" + std::to_string(stats.healers) + " ⚔️:" + std::to_string(stats.dps) + "]|r";
             
-            sWorld->SendServerMessage(SERVER_MSG_CUSTOM, announcement.c_str());
+            sWorldSessionMgr->SendServerMessage(SERVER_MSG_STRING, announcement.c_str());
         }
     }
 
     uint32 GetGuildPoints(uint32 guildId)
     {
-        if (QueryResult result = CharacterDatabase.PQuery("SELECT guild_points FROM guild WHERE guildid = %u", guildId))
+        QueryResult result = CharacterDatabase.Query("SELECT guild_points FROM guild WHERE guildid = {}", guildId);
+        if (result)
         {
             Field* fields = result->Fetch();
-            return fields[0].GetUInt32();
+            return fields[0].Get<uint32>();
         }
         return 0;
     }
@@ -187,13 +192,13 @@ public:
     {
         std::vector<std::pair<std::string, uint32>> topGuilds;
         
-        if (QueryResult result = CharacterDatabase.Query("SELECT name, guild_points FROM guild WHERE guild_points > 0 ORDER BY guild_points DESC LIMIT " + std::to_string(limit)))
+        if (QueryResult result = CharacterDatabase.Query("SELECT name, guild_points FROM guild WHERE guild_points > 0 ORDER BY guild_points DESC LIMIT {}", limit))
         {
             do
             {
                 Field* fields = result->Fetch();
-                std::string guildName = fields[0].GetString();
-                uint32 points = fields[1].GetUInt32();
+                std::string guildName = fields[0].Get<std::string>();
+                uint32 points = fields[1].Get<uint32>();
                 topGuilds.emplace_back(guildName, points);
             } while (result->NextRow());
         }
@@ -213,7 +218,7 @@ public:
         if (announceReset)
         {
             std::string announcement = "🏆 |cFFFFD700[SEASON END]|r |cFF87CEEBGuild Points Season has ended! Final standings:|r";
-            sWorld->SendServerMessage(SERVER_MSG_CUSTOM, announcement.c_str());
+            sWorldSessionMgr->SendServerMessage(SERVER_MSG_STRING, announcement.c_str());
         }
 
         // Distribute rewards to top guilds
@@ -242,7 +247,7 @@ public:
         if (announceReset)
         {
             std::string resetMsg = "✨ |cFFFFD700[NEW SEASON]|r |cFF98FB98All guild points have been reset! New season begins now!|r";
-            sWorld->SendServerMessage(SERVER_MSG_CUSTOM, resetMsg.c_str());
+            sWorldSessionMgr->SendServerMessage(SERVER_MSG_STRING, resetMsg.c_str());
         }
 
         LOG_INFO("module", "Guild Points have been reset. Rewards distributed to {} guilds.", std::min(topGuilds.size(), static_cast<size_t>(10)));
@@ -398,26 +403,26 @@ private:
         // Parse reward strings from config (simplified - normally you'd parse comma-separated strings)
         // First Place Rewards - More generous rewards
         firstPlaceRewards = {{49426, 5}, {45038, 10}, {40753, 15}, {37711, 20}};
-        firstPlaceGold = sConfigMgr->GetIntDefault("GuildPoints.Rewards.FirstPlace.Gold", 50000);
-        firstPlaceMount = sConfigMgr->GetIntDefault("GuildPoints.Rewards.FirstPlace.Mount", 25953);
+        firstPlaceGold = sConfigMgr->GetOption<uint32>("GuildPoints.Rewards.FirstPlace.Gold", 50000);
+        firstPlaceMount = sConfigMgr->GetOption<uint32>("GuildPoints.Rewards.FirstPlace.Mount", 25953);
         
         // Second Place Rewards
         secondPlaceRewards = {{49426, 3}, {45038, 7}, {40753, 10}, {37711, 15}};
-        secondPlaceGold = sConfigMgr->GetIntDefault("GuildPoints.Rewards.SecondPlace.Gold", 30000);
-        secondPlaceMount = sConfigMgr->GetIntDefault("GuildPoints.Rewards.SecondPlace.Mount", 25471);
+        secondPlaceGold = sConfigMgr->GetOption<uint32>("GuildPoints.Rewards.SecondPlace.Gold", 30000);
+        secondPlaceMount = sConfigMgr->GetOption<uint32>("GuildPoints.Rewards.SecondPlace.Mount", 25471);
         
         // Third Place Rewards
         thirdPlaceRewards = {{49426, 2}, {45038, 5}, {40753, 7}, {37711, 10}};
-        thirdPlaceGold = sConfigMgr->GetIntDefault("GuildPoints.Rewards.ThirdPlace.Gold", 20000);
-        thirdPlaceMount = sConfigMgr->GetIntDefault("GuildPoints.Rewards.ThirdPlace.Mount", 25470);
+        thirdPlaceGold = sConfigMgr->GetOption<uint32>("GuildPoints.Rewards.ThirdPlace.Gold", 20000);
+        thirdPlaceMount = sConfigMgr->GetOption<uint32>("GuildPoints.Rewards.ThirdPlace.Mount", 25470);
         
         // Participation Rewards
         participationRewards = {{40753, 3}, {37711, 10}};
-        participationGold = sConfigMgr->GetIntDefault("GuildPoints.Rewards.Participation.Gold", 5000);
+        participationGold = sConfigMgr->GetOption<uint32>("GuildPoints.Rewards.Participation.Gold", 5000);
 
         // Top ranks count for reward distribution
-        topRanksCount = sConfigMgr->GetIntDefault("GuildPoints.TopRanksCount", 3);
-        maxRewardedPerGuild = sConfigMgr->GetIntDefault("GuildPoints.MaxRewardedPerGuild", 25);
+        topRanksCount = sConfigMgr->GetOption<uint32>("GuildPoints.TopRanksCount", 3);
+        maxRewardedPerGuild = sConfigMgr->GetOption<uint32>("GuildPoints.MaxRewardedPerGuild", 25);
 
         // Title rewards disabled
         firstPlaceTitle = 0;
@@ -481,14 +486,14 @@ private:
             std::string announcement = medal + " |cFFFFD700[SEASON REWARDS]|r |cFF87CEEB<" + guildName + ">|r " +
                 "|cFF98FB98finished " + positionText + " with|r |cFFFFD700" + std::to_string(points) + " points|r " +
                 "|cFF90EE90and top " + std::to_string(topRanksCount) + " ranks (max " + std::to_string(maxRewardedPerGuild) + " people) received rewards!|r" + goldText + mountText;
-            sWorld->SendServerMessage(SERVER_MSG_CUSTOM, announcement.c_str());
+            sWorldSessionMgr->SendServerMessage(SERVER_MSG_STRING, announcement.c_str());
         }
 
         // Distribute rewards based on configuration
         switch (rewardDistribution)
         {
             case 0: // Only Guild Master
-                DistributeRewardsToPlayer(guild->GetLeader(), *rewards, gold, mount);
+                DistributeRewardsToPlayer(guild->GetLeaderGUID(), *rewards, gold, mount);
                 break;
             case 1: // All guild members
                 DistributeRewardsToAllMembers(guild, *rewards, gold, mount);
@@ -507,7 +512,7 @@ private:
         std::string guildMsg = medal + " |cFFFFD700[SEASON END]|r |cFF98FB98Your guild finished " + positionText + 
             " with " + std::to_string(points) + " points! Top " + std::to_string(topRanksCount) + 
             " ranks received rewards!|r" + goldText + mountText;
-        guild->BroadcastToGuild(nullptr, guildMsg, LANG_UNIVERSAL);
+        guild->BroadcastToGuild(nullptr, false, guildMsg, LANG_UNIVERSAL);
     }
 
     void DistributeRewardsToPlayer(ObjectGuid playerGuid, const std::vector<std::pair<uint32, uint32>>& rewards, uint32 gold, uint32 mount)
@@ -529,7 +534,7 @@ private:
         // Give mount
         if (mount > 0)
         {
-            player->LearnSpell(mount, false);
+            player->learnSpell(mount);
         }
 
         // Give items
@@ -581,8 +586,8 @@ private:
         uint32 addedCount = 0;
         
         // Query guild members with top ranks from database
-        QueryResult result = CharacterDatabase.PQuery(
-            "SELECT guid FROM guild_member WHERE guildid = %u AND rank <= 2 ORDER BY rank ASC LIMIT %u",
+        QueryResult result = CharacterDatabase.Query(
+            "SELECT guid FROM guild_member WHERE guildid = {} AND rank <= 2 ORDER BY rank ASC LIMIT {}",
             guild->GetId(), maxMembers);
         
         if (result)
@@ -590,7 +595,7 @@ private:
             do
             {
                 Field* fields = result->Fetch();
-                uint32 guid = fields[0].GetUInt32();
+                uint32 guid = fields[0].Get<uint32>();
                 topMembers.push_back(ObjectGuid::Create<HighGuid::Player>(guid));
             } while (result->NextRow());
         }
@@ -601,13 +606,13 @@ private:
     void DistributeRewardsToAllMembers(Guild* guild, const std::vector<std::pair<uint32, uint32>>& rewards, uint32 gold, uint32 mount)
     {
         // Query all guild members from database
-        QueryResult result = CharacterDatabase.PQuery("SELECT guid FROM guild_member WHERE guildid = %u", guild->GetId());
+        QueryResult result = CharacterDatabase.Query("SELECT guid FROM guild_member WHERE guildid = {}", guild->GetId());
         if (result)
         {
             do
             {
                 Field* fields = result->Fetch();
-                uint32 guid = fields[0].GetUInt32();
+                uint32 guid = fields[0].Get<uint32>();
                 DistributeRewardsToPlayer(ObjectGuid::Create<HighGuid::Player>(guid), rewards, gold, mount);
             } while (result->NextRow());
         }
@@ -616,13 +621,13 @@ private:
 
     void DistributeRewardsToOnlineMembers(Guild* guild, const std::vector<std::pair<uint32, uint32>>& rewards, uint32 gold, uint32 mount)
     {
-        QueryResult result = CharacterDatabase.PQuery("SELECT guid FROM guild_member WHERE guildid = %u", guild->GetId());
+        QueryResult result = CharacterDatabase.Query("SELECT guid FROM guild_member WHERE guildid = {}", guild->GetId());
         if (result)
         {
             do
             {
                 Field* fields = result->Fetch();
-                uint32 guid = fields[0].GetUInt32();
+                uint32 guid = fields[0].Get<uint32>();
                 Player* player = ObjectAccessor::FindPlayer(ObjectGuid::Create<HighGuid::Player>(guid));
                 if (player && player->IsInWorld())
                 {
@@ -693,16 +698,17 @@ private:
             if (member->IsAlive())
                 stats.alivePlayers++;
             
-            // Count by role
-            if (member->GetTalentSpecialization() == TALENT_SPEC_TANK)
+            // Count by role - simplified role detection for WotLK
+            uint8 playerClass = member->getClass();
+            if (playerClass == CLASS_WARRIOR || playerClass == CLASS_PALADIN || playerClass == CLASS_DEATH_KNIGHT)
                 stats.tanks++;
-            else if (member->GetTalentSpecialization() == TALENT_SPEC_HEALER)
+            else if (playerClass == CLASS_PRIEST || playerClass == CLASS_DRUID || playerClass == CLASS_SHAMAN || playerClass == CLASS_PALADIN)
                 stats.healers++;
             else
                 stats.dps++;
             
             // Count by faction
-            if (member->GetTeam() == HORDE)
+            if (member->GetTeamId() == TEAM_HORDE)
                 stats.hordeCount++;
             else
                 stats.allianceCount++;
@@ -771,7 +777,7 @@ private:
 
     void AddPointsToGuild(Guild* guild, uint32 points)
     {
-        CharacterDatabase.PExecute("UPDATE guild SET guild_points = guild_points + %u WHERE guildid = %u", 
+        CharacterDatabase.Execute("UPDATE guild SET guild_points = guild_points + {} WHERE guildid = {}", 
             points, guild->GetId());
     }
 
@@ -782,7 +788,7 @@ private:
             " points|r |cFF87CEEBfor defeating|r |cFFFF6B6B" + bossName + "|r! " +
             "|cFF90EE90Total Guild Points:|r |cFFFFD700" + std::to_string(totalPoints) + "|r";
         
-        guild->BroadcastToGuild(nullptr, message, LANG_UNIVERSAL);
+        guild->BroadcastToGuild(nullptr, false, message, LANG_UNIVERSAL);
     }
 
     void ApplyFactionalEffects(Group* group, const RaidStats& stats)
@@ -812,14 +818,14 @@ private:
             }
             
             // Apply faction buffs
-            if (majorityHorde && member->GetTeam() == HORDE)
+            if (majorityHorde && member->GetTeamId() == TEAM_HORDE)
             {
                 for (uint32 spellId : hordeBuffs)
                 {
                     member->CastSpell(member, spellId, true);
                 }
             }
-            else if (majorityAlliance && member->GetTeam() == ALLIANCE)
+            else if (majorityAlliance && member->GetTeamId() == TEAM_ALLIANCE)
             {
                 for (uint32 spellId : allianceBuffs)
                 {
@@ -835,7 +841,7 @@ class GuildPointsCreatureScript : public CreatureScript
 public:
     GuildPointsCreatureScript() : CreatureScript("GuildPointsCreatureScript") { }
 
-    void OnJustDied(Creature* creature, Unit* killer) override
+    void OnJustDied(Creature* creature, Unit* killer) 
     {
         if (!killer)
             return;
@@ -857,12 +863,12 @@ class GuildPointsCommandScript : public CommandScript
 public:
     GuildPointsCommandScript() : CommandScript("GuildPointsCommandScript") { }
 
-    std::vector<ChatCommand> GetCommands() const override
+    ChatCommandTable GetCommands() const override
     {
-        static std::vector<ChatCommand> commandTable =
+        static ChatCommandTable commandTable =
         {
-            { "grank", rbac::RBAC_PERM_COMMAND_INFO, false, &HandleGRankCommand, "Show guild ranking" },
-            { "greset", rbac::RBAC_PERM_COMMAND_MODIFY, true, &HandleGResetCommand, "Reset guild points and distribute season rewards" }
+            { "grank", HandleGRankCommand, SEC_PLAYER, Console::No },
+            { "greset", HandleGResetCommand, SEC_ADMINISTRATOR, Console::Yes }
         };
         return commandTable;
     }
@@ -936,20 +942,19 @@ class GuildPointsWorldScript : public WorldScript
 public:
     GuildPointsWorldScript() : WorldScript("GuildPointsWorldScript") { }
 
-    void OnConfigLoad(bool reload) override
+    void OnConfigLoad(bool /*reload*/) 
     {
         GuildPointsManager::instance()->LoadConfig();
-        if (reload)
-            LOG_INFO("module", "Guild Points Module configuration reloaded.");
+        LOG_INFO("module", "Guild Points Module configuration loaded.");
     }
 
-    void OnStartup() override
+    void OnStartup() 
     {
         LOG_INFO("module", "Guild Points Module loaded successfully.");
     }
 };
 
-void AddGuildPointsScripts()
+void Addmod_guild_pointsScripts()
 {
     new GuildPointsCreatureScript();
     new GuildPointsCommandScript();
